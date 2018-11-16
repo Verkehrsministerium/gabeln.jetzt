@@ -59,12 +59,6 @@ impl<'a> Default for EventCollector<'a> {
 }
 
 impl<'a> EventCollector<'a> {
-    pub fn add_user(mut self, user: &'a str) -> Self {
-        self.users.push(user);
-
-        self
-    }
-
     pub fn add_users(mut self, mut users: Vec<&'a str>) -> Self {
         self.users.append(&mut users);
 
