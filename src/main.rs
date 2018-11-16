@@ -12,39 +12,46 @@ extern crate rocket_contrib;
 #[macro_use] extern crate serde_derive;
 extern crate serde_json;
 extern crate serde;
+extern crate clokwerk;
 
 mod error;
 mod events;
 mod feed;
 mod content;
+mod event_manager;
 
-use events::EventCollector;
+use event_manager::EventManager;
 use rocket_contrib::serve::StaticFiles;
-use std::env;
+use clokwerk::{Scheduler, TimeUnits};
+use std::sync::{Arc, RwLock};
+use std::thread;
 
 fn main() {
-    let events = EventCollector::default()
-        .add_users(
-            env::var("USERS")
-                .unwrap_or("fin-ger,jwuensche".to_string())
-                .split(",")
-                .collect::<Vec<&str>>()
-        )
-        .collect()
-        .unwrap();
+    let events = Arc::new(RwLock::new(EventManager::default()));
+    let update_events = events.clone();
+    let update = move || {
+        println!("Updating events...");
 
-    let feed = feed::create_feed(&events)
-        .unwrap()
-        .to_string();
+        match update_events.write().unwrap().update() {
+            Ok(_) => {
+            },
+            Err(e) => {
+                println!("{:?}", e);
+            },
+        }
+    };
 
-    // TODO: update events and feed to fetch new events
     // TODO: telegram bot
+
+    let mut scheduler = Scheduler::new();
+    scheduler.every(5.minutes()).run(update.clone());
+    scheduler.watch_thread(std::time::Duration::from_millis(500));
+    thread::spawn(update);
 
     rocket::ignite()
         .register(catchers![content::not_found])
         .mount("/", routes![content::index, content::feed, content::about])
         .mount("/assets", StaticFiles::from("assets"))
-        .manage(feed)
         .manage(events)
         .launch();
 }

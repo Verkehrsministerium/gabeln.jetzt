@@ -2,7 +2,8 @@ use rocket::{State, Request, response::content};
 use maud::{html, DOCTYPE, Markup};
 use chrono::Utc;
 use chrono_humanize::HumanTime;
-use events::Event;
+use event_manager::EventManager;
+use std::sync::{Arc, RwLock};
 
 pub fn gabeln(title: &str, content: Markup) -> content::Html<String> {
     content::Html((html! {
@@ -60,10 +61,10 @@ pub fn not_found(_req: &Request) -> content::Html<String> {
 }
 
 #[get("/")]
-pub fn index(events: State<Vec<Event>>) -> content::Html<String> {
+pub fn index(event_manager: State<Arc<RwLock<EventManager>>>) -> content::Html<String> {
     gabeln("gabeln.jetzt", html! {
         div.ui.feed {
-            @for ref event in events.inner().iter().rev() {
+            @for ref event in event_manager.inner().read().unwrap().events.iter().rev() {
                 div.event {
                     div.label {
                         a href=(format!("https://github.com/{}", event.actor.display_login)) {
@@ -94,8 +95,8 @@ pub fn index(events: State<Vec<Event>>) -> content::Html<String> {
 }
 
 #[get("/atom.xml")]
-pub fn feed(feed: State<String>) -> content::Xml<String> {
-    content::Xml(feed.inner().to_string())
+pub fn feed(event_manager: State<Arc<RwLock<EventManager>>>) -> content::Xml<String> {
+    content::Xml(event_manager.inner().read().unwrap().feed.to_string())
 }
 
 #[get("/about")]
