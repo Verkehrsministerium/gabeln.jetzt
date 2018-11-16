@@ -1,7 +1,8 @@
-use reqwest::Client;
+use reqwest::{Client, header::AUTHORIZATION};
 use regex::Regex;
 use chrono::{DateTime, Utc};
 use rayon::prelude::*;
+use std::env;
 
 use error::GabelnError;
 
@@ -43,6 +44,7 @@ pub struct EventCollector<'a> {
     client: Client,
     re: Regex,
     users: Vec<&'a str>,
+    oauth_token: String,
 }
 
 impl<'a> Default for EventCollector<'a> {
@@ -51,6 +53,7 @@ impl<'a> Default for EventCollector<'a> {
             client: Client::new(),
             re: Regex::new(",?.*page=\\d+.*; rel=\"next\",?.*").unwrap(),
             users: Vec::new(),
+            oauth_token: env::var("OAUTH_TOKEN").unwrap_or(String::new()),
         }
     }
 }
@@ -90,6 +93,7 @@ impl<'a> EventCollector<'a> {
             let url = format!("https://api.github.com/users/{}/events/public?page={}&per_page=300", user, page);
             let mut response = self.client
                 .get(&url)
+                .header(AUTHORIZATION, format!("token {}", self.oauth_token))
                 .send()
                 .map_err(|_| GabelnError::FailedToFetchUserEvents(user.into()))?;
 
@@ -97,9 +101,8 @@ impl<'a> EventCollector<'a> {
                 let links = response
                     .headers()
                     .get("Link")
-                    .ok_or(GabelnError::FailedToFetchUserEvents(user.into()))?
-                    .to_str()
-                    .map_err(|_| GabelnError::FailedToFetchUserEvents(user.into()))?;
+                    .and_then(|l| l.to_str().ok())
+                    .unwrap_or("");
 
                 if self.re.is_match(links) {
                     page += 1;

@@ -66,17 +66,17 @@ pub fn create_feed(events: &Vec<Event>) -> Result<Feed, GabelnError> {
                 PersonBuilder::default()
                     .name("Fin Christensen")
                     .email(Some("fchristensen@embedded.enterprises".into()))
-                    .uri(Some("blog.like-a-fin.lol".into()))
+                    .uri(Some("https://blog.like-a-fin.lol".into()))
                     .build()
                     .map_err(|_| GabelnError::FailedToCreateFeed)?,
                 PersonBuilder::default()
                     .name("Johannes Wuensche")
                     .email(Some("johannes.wuensche@st.ovgu.de".into()))
-                    .uri(Some("github.com/jwuensche".into()))
+                    .uri(Some("https://github.com/jwuensche".into()))
                     .build()
                     .map_err(|_| GabelnError::FailedToCreateFeed)?,
             ])
-            .icon(Some("/icon.jpg".into()))
+            .icon(Some("/assets/icon.jpg".into()))
             .links(vec![
                 LinkBuilder::default()
                     .href("/atom.xml")
@@ -95,7 +95,7 @@ pub fn create_feed(events: &Vec<Event>) -> Result<Feed, GabelnError> {
                     .build()
                     .map_err(|_| GabelnError::FailedToCreateFeed)?,
             ])
-            .logo(Some("/logo.jpg".into()))
+            .logo(Some("/assets/logo.jpg".into()))
             .entries(entries)
             .subtitle(Some("GitHub Fork Feed".into()))
             .build()
