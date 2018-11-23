@@ -53,7 +53,7 @@ impl<'a> Default for EventCollector<'a> {
             client: Client::new(),
             re: Regex::new(",?.*page=\\d+.*; rel=\"next\",?.*").unwrap(),
             users: Vec::new(),
-            oauth_token: env::var("OAUTH_TOKEN").unwrap_or(String::new()),
+            oauth_token: env::var("GITHUB_OAUTH_TOKEN").unwrap_or(String::new()),
         }
     }
 }

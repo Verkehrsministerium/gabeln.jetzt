@@ -13,14 +13,19 @@ extern crate rocket_contrib;
 extern crate serde_json;
 extern crate serde;
 extern crate clokwerk;
+extern crate futures;
+extern crate tokio;
+extern crate telegram_bot_fork;
 
 mod error;
 mod events;
 mod feed;
 mod content;
 mod event_manager;
+mod telegram;
 
 use event_manager::EventManager;
+use telegram::TelegramBot;
 use rocket_contrib::serve::StaticFiles;
 use clokwerk::{Scheduler, TimeUnits};
 use std::sync::{Arc, RwLock};
@@ -41,7 +46,12 @@ fn main() {
         }
     };
 
-    // TODO: telegram bot
+    // TODO: add logging
+
+    // TODO: remove this thread
+    thread::spawn(|| {
+        TelegramBot::new().unwrap().run().unwrap();
+    });
 
     let mut scheduler = Scheduler::new();
     scheduler.every(5.minutes()).run(update.clone());

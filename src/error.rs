@@ -5,6 +5,9 @@ pub enum GabelnError {
     FailedToFetchUserEvents(String),
     FailedToParseUserEvents,
     FailedToCreateFeed,
+    NoTelegramBotToken,
+    FailedToCreateTelegramBot,
+    FailedToListenForTelegramMessages,
 }
 
 impl Error for GabelnError {
@@ -13,6 +16,9 @@ impl Error for GabelnError {
             GabelnError::FailedToFetchUserEvents(_) => "Failed to fetch the events for the given user!",
             GabelnError::FailedToParseUserEvents => "Failed to parse the user events response body!",
             GabelnError::FailedToCreateFeed => "Failed to create atom feed from user events!",
+            GabelnError::NoTelegramBotToken => "Please provide a telegram bot token via environment variable!",
+            GabelnError::FailedToCreateTelegramBot => "Could not create Telegram API instance!",
+            GabelnError::FailedToListenForTelegramMessages => "Could not listen for Telegram messages!",
         }
     }
 }
