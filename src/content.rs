@@ -48,6 +48,7 @@ pub fn gabeln(title: &str, content: Markup) -> content::Html<String> {
 
 #[catch(404)]
 pub fn not_found(_req: &Request) -> content::Html<String> {
+    debug!("Handling 404 request");
     gabeln("Not found", html! {
         div.ui.placeholder.segment {
             div.ui.icon.header {
@@ -62,6 +63,7 @@ pub fn not_found(_req: &Request) -> content::Html<String> {
 
 #[get("/")]
 pub fn index(event_manager: State<Arc<RwLock<EventManager>>>) -> content::Html<String> {
+    debug!("Handling / request");
     gabeln("gabeln.jetzt", html! {
         div.ui.feed {
             @for ref event in event_manager.inner().read().unwrap().events.iter().rev() {
@@ -96,11 +98,13 @@ pub fn index(event_manager: State<Arc<RwLock<EventManager>>>) -> content::Html<S
 
 #[get("/atom.xml")]
 pub fn feed(event_manager: State<Arc<RwLock<EventManager>>>) -> content::Xml<String> {
+    debug!("Handling /atom.xml request");
     content::Xml(event_manager.inner().read().unwrap().feed.to_string())
 }
 
 #[get("/about")]
 pub fn about() -> content::Html<String> {
+    debug!("Handling /about request");
     gabeln("About", html! {
         h1 { "About" }
         p {

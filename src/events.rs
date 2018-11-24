@@ -53,7 +53,11 @@ impl<'a> Default for EventCollector<'a> {
             client: Client::new(),
             re: Regex::new(",?.*page=\\d+.*; rel=\"next\",?.*").unwrap(),
             users: Vec::new(),
-            oauth_token: env::var("GITHUB_OAUTH_TOKEN").unwrap_or(String::new()),
+            oauth_token: env::var("GITHUB_OAUTH_TOKEN")
+                .unwrap_or_else(|_| {
+                    warn!("The environment variable GITHUB_OAUTH_TOKEN was not set! You will run into GitHub rate limiting!");
+                    String::new()
+                }),
         }
     }
 }
@@ -66,6 +70,8 @@ impl<'a> EventCollector<'a> {
     }
 
     pub fn collect(self) -> Result<Vec<Event>, GabelnError> {
+        debug!("Collecting events for users {}", self.users.join(", "));
+
         let mut events = self.users
             .par_iter()
             .map(|username| self.get_events_of_user(username))
@@ -74,6 +80,7 @@ impl<'a> EventCollector<'a> {
             .flatten()
             .collect::<Vec<Event>>();
 
+        debug!("Sorting events by timestamp");
         events.sort_unstable_by_key(|ev| ev.created_at);
 
         Ok(events)
@@ -83,13 +90,19 @@ impl<'a> EventCollector<'a> {
         let mut page: u32 = 1;
         let mut events = Vec::new();
 
+        debug!("Collecting events for user {}", user);
+
         loop {
             let url = format!("https://api.github.com/users/{}/events/public?page={}&per_page=300", user, page);
+            debug!("Crawling user API: {}", url);
             let mut response = self.client
                 .get(&url)
                 .header(AUTHORIZATION, format!("token {}", self.oauth_token))
                 .send()
-                .map_err(|_| GabelnError::FailedToFetchUserEvents(user.into()))?;
+                .map_err(|e| {
+                    error!("Failed to fetch user events: {}", e);
+                    GabelnError::FailedToFetchUserEvents(user.into())
+                })?;
 
             {
                 let links = response

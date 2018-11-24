@@ -18,12 +18,7 @@ extern crate tokio;
 extern crate telegram_bot_fork;
 #[macro_use]
 extern crate log;
-#[macro_use(slog_o)]
-extern crate slog;
-extern crate slog_stdlog;
-extern crate slog_scope;
-extern crate slog_term;
-extern crate slog_async;
+extern crate fern;
 
 mod error;
 mod events;
@@ -36,25 +31,37 @@ use event_manager::EventManager;
 use telegram::TelegramBot;
 use rocket_contrib::serve::StaticFiles;
 use clokwerk::{Scheduler, TimeUnits};
-use slog::Drain;
+use chrono::SecondsFormat;
+use fern::colors::{ColoredLevelConfig, Color};
 use std::sync::{Arc, RwLock};
 use std::thread;
 
 fn main() {
-    let decorator = slog_term::TermDecorator::new().build();
-    let drain = slog_term::FullFormat::new(decorator).build().fuse();
-    let drain = slog_async::Async::new(drain).build().fuse();
-    let logger = slog::Logger::root(drain, slog_o!("place" =>
-        slog::FnValue(move |info| {
-            format!("{}:{}",
-                info.file(),
-                info.line(),
-            )
-        })
-    ));
+    let colors_level = ColoredLevelConfig::new()
+        .error(Color::Red)
+        .warn(Color::Yellow)
+        .info(Color::Green)
+        .debug(Color::Cyan)
+        .trace(Color::Magenta);
 
-    let _scope_guard = slog_scope::set_global_logger(logger);
-    let _log_guard = slog_stdlog::init_with_level(log::LogLevel::Info).unwrap();
+    fern::Dispatch::new()
+        .format(move |out, message, record| {
+            out.finish(format_args!(
+                "{color_timestamp}{timestamp}{reset} [{level}] {bold}<{location}>{reset} {message}",
+                bold = "\x1B[1m",
+                reset = "\x1B[0m",
+                color_timestamp = format!("\x1B[{}m", Color::Blue.to_fg_str()),
+                timestamp = chrono::Utc::now().to_rfc3339_opts(SecondsFormat::Millis, true),
+                location = record.target(),
+                level = colors_level.color(record.level()),
+                message = message,
+            ))
+        })
+        .level(log::LevelFilter::Info)
+        .level_for("gabeln", log::LevelFilter::Trace)
+        .chain(std::io::stdout())
+        .apply()
+        .unwrap();
 
     let events = Arc::new(RwLock::new(EventManager::default()));
     let update_events = events.clone();
@@ -68,7 +75,6 @@ fn main() {
         }
     };
 
-    // TODO: add logging
     // TODO: add channel that publishes new events (last 5 minutes)
     // TODO: use different tokio runtime
     // TODO: crawl random gif from giphy

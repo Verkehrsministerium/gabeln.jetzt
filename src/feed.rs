@@ -5,6 +5,7 @@ use error::GabelnError;
 use events::Event;
 
 pub fn create_feed(events: &Vec<Event>) -> Result<Feed, GabelnError> {
+    info!("Generating new atom feed");
     let mut entries = Vec::new();
 
     for ref event in events.iter().rev() {
