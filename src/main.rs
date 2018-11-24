@@ -18,7 +18,7 @@ extern crate tokio;
 extern crate telegram_bot_fork;
 #[macro_use]
 extern crate log;
-#[macro_use(slog_o, slog_kv)]
+#[macro_use(slog_o)]
 extern crate slog;
 extern crate slog_stdlog;
 extern crate slog_scope;
@@ -47,7 +47,7 @@ fn main() {
     let logger = slog::Logger::root(drain, slog_o!("version" => env!("CARGO_PKG_VERSION")));
 
     let _scope_guard = slog_scope::set_global_logger(logger);
-    let _log_guard = slog_stdlog::init().unwrap();
+    let _log_guard = slog_stdlog::init_with_level(log::LogLevel::Info).unwrap();
 
     let events = Arc::new(RwLock::new(EventManager::default()));
     let update_events = events.clone();
