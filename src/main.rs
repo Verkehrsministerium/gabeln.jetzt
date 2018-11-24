@@ -47,6 +47,10 @@ fn main() {
     };
 
     // TODO: add logging
+    // TODO: add channel that publishes new events (last 5 minutes)
+    // TODO: use different tokio runtime
+    // TODO: crawl random gif from giphy
+    // TODO: send gif in telegram bot
 
     // TODO: remove this thread
     thread::spawn(|| {
