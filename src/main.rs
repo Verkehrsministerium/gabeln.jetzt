@@ -16,6 +16,14 @@ extern crate clokwerk;
 extern crate futures;
 extern crate tokio;
 extern crate telegram_bot_fork;
+#[macro_use]
+extern crate log;
+#[macro_use(slog_o, slog_kv)]
+extern crate slog;
+extern crate slog_stdlog;
+extern crate slog_scope;
+extern crate slog_term;
+extern crate slog_async;
 
 mod error;
 mod events;
@@ -28,20 +36,27 @@ use event_manager::EventManager;
 use telegram::TelegramBot;
 use rocket_contrib::serve::StaticFiles;
 use clokwerk::{Scheduler, TimeUnits};
+use slog::Drain;
 use std::sync::{Arc, RwLock};
 use std::thread;
 
 fn main() {
+    let decorator = slog_term::TermDecorator::new().build();
+    let drain = slog_term::FullFormat::new(decorator).build().fuse();
+    let drain = slog_async::Async::new(drain).build().fuse();
+    let logger = slog::Logger::root(drain, slog_o!("version" => env!("CARGO_PKG_VERSION")));
+
+    let _scope_guard = slog_scope::set_global_logger(logger);
+    let _log_guard = slog_stdlog::init().unwrap();
+
     let events = Arc::new(RwLock::new(EventManager::default()));
     let update_events = events.clone();
     let update = move || {
-        println!("Updating events...");
-
         match update_events.write().unwrap().update() {
             Ok(_) => {
             },
             Err(e) => {
-                println!("{:?}", e);
+                error!("{:?}", e);
             },
         }
     };

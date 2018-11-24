@@ -21,6 +21,7 @@ impl Default for EventManager {
 
 impl EventManager {
     pub fn update(&mut self) -> Result<(), GabelnError> {
+        info!("Updating event list");
         self.events = EventCollector::default()
             .add_users(
                 env::var("USERS")
