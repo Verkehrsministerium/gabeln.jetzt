@@ -44,7 +44,14 @@ fn main() {
     let decorator = slog_term::TermDecorator::new().build();
     let drain = slog_term::FullFormat::new(decorator).build().fuse();
     let drain = slog_async::Async::new(drain).build().fuse();
-    let logger = slog::Logger::root(drain, slog_o!("version" => env!("CARGO_PKG_VERSION")));
+    let logger = slog::Logger::root(drain, slog_o!("place" =>
+        slog::FnValue(move |info| {
+            format!("{}:{}",
+                info.file(),
+                info.line(),
+            )
+        })
+    ));
 
     let _scope_guard = slog_scope::set_global_logger(logger);
     let _log_guard = slog_stdlog::init_with_level(log::LogLevel::Info).unwrap();
