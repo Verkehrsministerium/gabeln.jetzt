@@ -1,4 +1,5 @@
 #![feature(proc_macro_hygiene, decl_macro)]
+#![feature(vec_remove_item)]
 
 extern crate regex;
 extern crate reqwest;
@@ -33,7 +34,7 @@ use rocket_contrib::serve::StaticFiles;
 use clokwerk::{Scheduler, TimeUnits};
 use chrono::SecondsFormat;
 use fern::colors::{ColoredLevelConfig, Color};
-use std::sync::{Arc, RwLock};
+use std::sync::{Arc, Mutex};
 use std::thread;
 
 fn main() {
@@ -63,10 +64,11 @@ fn main() {
         .apply()
         .unwrap();
 
-    let events = Arc::new(RwLock::new(EventManager::default()));
+    let (event_manager, recv) = EventManager::new();
+    let events = Arc::new(Mutex::new(event_manager));
     let update_events = events.clone();
     let update = move || {
-        match update_events.write().unwrap().update() {
+        match update_events.lock().unwrap().update() {
             Ok(_) => {
             },
             Err(e) => {
@@ -75,14 +77,11 @@ fn main() {
         }
     };
 
-    // TODO: add channel that publishes new events (last 5 minutes)
-    // TODO: use different tokio runtime
     // TODO: crawl random gif from giphy
     // TODO: send gif in telegram bot
 
-    // TODO: remove this thread
-    thread::spawn(|| {
-        TelegramBot::new().unwrap().run().unwrap();
+    thread::spawn(move || {
+        TelegramBot::new().unwrap().run(recv).unwrap();
     });
 
     let mut scheduler = Scheduler::new();

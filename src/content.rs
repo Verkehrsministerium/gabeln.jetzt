@@ -3,7 +3,7 @@ use maud::{html, DOCTYPE, Markup};
 use chrono::Utc;
 use chrono_humanize::HumanTime;
 use event_manager::EventManager;
-use std::sync::{Arc, RwLock};
+use std::sync::{Arc, Mutex};
 
 pub fn gabeln(title: &str, content: Markup) -> content::Html<String> {
     content::Html((html! {
@@ -62,11 +62,11 @@ pub fn not_found(_req: &Request) -> content::Html<String> {
 }
 
 #[get("/")]
-pub fn index(event_manager: State<Arc<RwLock<EventManager>>>) -> content::Html<String> {
+pub fn index(event_manager: State<Arc<Mutex<EventManager>>>) -> content::Html<String> {
     debug!("Handling / request");
     gabeln("gabeln.jetzt", html! {
         div.ui.feed {
-            @for ref event in event_manager.inner().read().unwrap().events.iter().rev() {
+            @for ref event in event_manager.inner().lock().unwrap().events.iter().rev() {
                 div.event {
                     div.label {
                         a href=(format!("https://github.com/{}", event.actor.display_login)) {
@@ -97,9 +97,9 @@ pub fn index(event_manager: State<Arc<RwLock<EventManager>>>) -> content::Html<S
 }
 
 #[get("/atom.xml")]
-pub fn feed(event_manager: State<Arc<RwLock<EventManager>>>) -> content::Xml<String> {
+pub fn feed(event_manager: State<Arc<Mutex<EventManager>>>) -> content::Xml<String> {
     debug!("Handling /atom.xml request");
-    content::Xml(event_manager.inner().read().unwrap().feed.to_string())
+    content::Xml(event_manager.inner().lock().unwrap().feed.to_string())
 }
 
 #[get("/about")]

@@ -8,6 +8,9 @@ pub enum GabelnError {
     NoTelegramBotToken,
     FailedToCreateTelegramBot,
     FailedToListenForTelegramMessages,
+    FailedToListenForEvents,
+    FailedToPublishEvents,
+    FailedToGetOwnUser,
 }
 
 impl Error for GabelnError {
@@ -19,6 +22,9 @@ impl Error for GabelnError {
             GabelnError::NoTelegramBotToken => "Please provide a telegram bot token via environment variable!",
             GabelnError::FailedToCreateTelegramBot => "Could not create Telegram API instance!",
             GabelnError::FailedToListenForTelegramMessages => "Could not listen for Telegram messages!",
+            GabelnError::FailedToListenForEvents => "Could not listen for events!",
+            GabelnError::FailedToPublishEvents => "Failed to publish user events to channel!",
+            GabelnError::FailedToGetOwnUser => "Failed to get user of this bot!",
         }
     }
 }
