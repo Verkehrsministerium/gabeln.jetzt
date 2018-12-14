@@ -1,5 +1,13 @@
 # gabeln.jetzt
 
+[![](https://img.shields.io/travis/verkehrsministerium/gabeln.jetzt.svg)](https://travis-ci.org/verkehrsministerium/gabeln.jetzt)
+[![](https://img.shields.io/docker/automated/fin1ger/gabeln.jetzt.svg)](https://cloud.docker.com/repository/docker/fin1ger/gabeln.jetzt)
+[![](https://img.shields.io/docker/build/fin1ger/gabeln.jetzt.svg)](https://cloud.docker.com/repository/docker/fin1ger/gabeln.jetzt/tags)
+![](https://img.shields.io/microbadger/image-size/fin1ger%2Fgabeln.jetzt.svg)
+[![](https://img.shields.io/github/tag/verkehrsministerium/gabeln.jetzt.svg)](https://github.com/verkehrsministerium/gabeln.jetzt/releases)
+
+---
+
 This repository hosts a webserver that displays github fork events and sends events via a telegram bot.
 
 ## How to build?
