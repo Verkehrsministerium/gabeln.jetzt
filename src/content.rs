@@ -13,7 +13,7 @@ pub fn gabeln(title: &str, content: Markup) -> content::Html<String> {
                 meta charset="utf-8";
                 meta name="viewport" content="width=device-width, initial-scale=1.0";
                 title { (title) }
-                link rel="stylesheet" type="text/css" href="assets/semantic.min.css";
+                link rel="stylesheet" type="text/css" href="semantic.min.css";
             }
 
             body {

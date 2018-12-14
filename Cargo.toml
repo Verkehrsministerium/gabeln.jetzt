@@ -1,5 +1,5 @@
 [package]
-name = "gabeln"
+name = "gabeln-jetzt"
 version = "0.1.0"
 authors = ["Fin Christensen <christensen.fin@gmail.com>"]
 
@@ -12,8 +12,8 @@ reqwest = "^0.9.4"
 rayon = "^1.0"
 chrono = { version = "^0.4", features = ["serde"] }
 atom_syndication = "^0.6.0"
-rocket = "^0.4.0-rc.1"
-rocket_contrib = "^0.4.0-rc.1"
+rocket = "^0.4.0"
+rocket_contrib = "^0.4.0"
 maud = "*"
 chrono-humanize = "^0.0.11"
 clokwerk = "^0.1.0"

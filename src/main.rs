@@ -91,7 +91,7 @@ fn main() {
     rocket::ignite()
         .register(catchers![content::not_found])
         .mount("/", routes![content::index, content::feed, content::about])
-        .mount("/assets", StaticFiles::from("assets"))
+        .mount("/", StaticFiles::from("assets"))
         .manage(events)
         .launch();
 }
