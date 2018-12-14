@@ -28,8 +28,6 @@ impl EventManager {
     }
 
     pub fn update(&mut self) -> Result<(), GabelnError> {
-        std::thread::sleep(std::time::Duration::from_secs(5));
-
         info!("Updating event list");
         self.events = EventCollector::default()
             .add_users(
@@ -42,7 +40,7 @@ impl EventManager {
         self.feed = feed::create_feed(&self.events)?.to_string();
 
         let now = Utc::now();
-        let duration = chrono::Duration::minutes(5000000);
+        let duration = chrono::Duration::minutes(7);
         for event in self.events.iter() {
             if now - event.created_at < duration {
                 info!("Publishing new fork event: {}", event.payload.forkee.clone().unwrap().full_name);

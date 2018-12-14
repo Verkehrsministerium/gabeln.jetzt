@@ -1,14 +1,27 @@
 use std::env;
 use futures::{Stream, future::lazy, sync::mpsc::Receiver};
-use telegram_bot_fork::{Api, User, UpdateKind, MessageKind, CanSendMessage, CanReplySendMessage, GetMe, MessageChat};
-use telegram_bot_fork::types::Update;
+use telegram_bot_fork::{
+    Api,
+    CanReplySendMessage,
+    CanSendDocument,
+    CanSendMessage,
+    GetMe,
+    MessageChat,
+    MessageKind,
+    ParseMode,
+    Update,
+    UpdateKind,
+    User,
+};
 use error::GabelnError;
 use events::Event;
+use giphy::Giphy;
 
 pub struct TelegramBot {
     api: Api,
     chats: Vec<MessageChat>,
     me: User,
+    giphy: Giphy,
 }
 
 enum BotUpdate {
@@ -18,6 +31,7 @@ enum BotUpdate {
 
 impl TelegramBot {
     pub fn new() -> Result<TelegramBot, GabelnError> {
+        let giphy = Giphy::new()?;
         let token = env::var("TELEGRAM_BOT_TOKEN")
             .map_err(|_| GabelnError::NoTelegramBotToken)?;
         let api = Api::new(token)
@@ -31,6 +45,7 @@ impl TelegramBot {
             api: api,
             chats: vec![],
             me: me,
+            giphy: giphy,
         })
     }
 
@@ -51,10 +66,11 @@ impl TelegramBot {
                         },
                         BotUpdate::Event(event) => {
                             self.send_text(format!(
-                                "{} forked {} at {}!",
+                                "**{}** forked __{}__ at [{}]({})!",
                                 event.actor.display_login,
                                 event.repo.name,
                                 event.payload.forkee.clone().unwrap().full_name,
+                                event.payload.forkee.clone().unwrap().html_url,
                             ));
                         },
                     }
@@ -66,13 +82,14 @@ impl TelegramBot {
 
     fn send_gif(&self) {
         for chat in self.chats.iter() {
-            self.api.spawn(chat.text("just imagine its a gif..."));
+            self.api.spawn(chat.document_url(self.giphy.get_gif().unwrap()));
         }
     }
 
     fn send_text(&self, msg: String) {
         for chat in self.chats.iter() {
-            self.api.spawn(chat.text(&msg));
+            self.api.spawn(chat.text(&msg).parse_mode(ParseMode::Markdown));
+            self.send_gif();
         }
     }
 
@@ -107,6 +124,7 @@ impl TelegramBot {
                         },
                         _ => {
                             if self.chats.contains(&message.chat) && data.contains("gabeln.jetzt") {
+                                info!("User {} requested gif", message.from.first_name);
                                 self.send_gif();
                             }
                         },

@@ -11,6 +11,9 @@ pub enum GabelnError {
     FailedToListenForEvents,
     FailedToPublishEvents,
     FailedToGetOwnUser,
+    NoGiphyApiKey,
+    FailedToFetchGif,
+    FailedToParseGiphyResponse,
 }
 
 impl Error for GabelnError {
@@ -25,6 +28,9 @@ impl Error for GabelnError {
             GabelnError::FailedToListenForEvents => "Could not listen for events!",
             GabelnError::FailedToPublishEvents => "Failed to publish user events to channel!",
             GabelnError::FailedToGetOwnUser => "Failed to get user of this bot!",
+            GabelnError::NoGiphyApiKey => "Please provide a giphy API key via environment variable!",
+            GabelnError::FailedToFetchGif => "Failed to fetch gif from giphy API!",
+            GabelnError::FailedToParseGiphyResponse => "Failed to parse response from giphy API!",
         }
     }
 }

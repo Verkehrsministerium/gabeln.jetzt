@@ -14,8 +14,6 @@ pub fn gabeln(title: &str, content: Markup) -> content::Html<String> {
                 meta name="viewport" content="width=device-width, initial-scale=1.0";
                 title { (title) }
                 link rel="stylesheet" type="text/css" href="assets/semantic.min.css";
-                script src="assets/jquery.slim.min.js" { }
-                script src="assets/semantic.min.js" { }
             }
 
             body {

@@ -20,6 +20,7 @@ extern crate telegram_bot_fork;
 #[macro_use]
 extern crate log;
 extern crate fern;
+extern crate rand;
 
 mod error;
 mod events;
@@ -27,6 +28,7 @@ mod feed;
 mod content;
 mod event_manager;
 mod telegram;
+mod giphy;
 
 use event_manager::EventManager;
 use telegram::TelegramBot;
@@ -76,9 +78,6 @@ fn main() {
             },
         }
     };
-
-    // TODO: crawl random gif from giphy
-    // TODO: send gif in telegram bot
 
     thread::spawn(move || {
         TelegramBot::new().unwrap().run(recv).unwrap();

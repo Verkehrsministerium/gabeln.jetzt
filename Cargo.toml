@@ -17,8 +17,10 @@ rocket_contrib = "^0.4.0-rc.1"
 maud = "*"
 chrono-humanize = "^0.0.11"
 clokwerk = "^0.1.0"
-telegram-bot-fork = "^0.7.6"
+#telegram-bot-fork = "^0.7.6"
+telegram-bot-fork = { git = "https://github.com/fin-ger/telegram-bot" }
 tokio = "^0.1"
 futures = "^0.1"
 log = "^0.4.0"
 fern = { version = "^0.5.7", features = ["colored"] }
+rand = "^0.6.1"
