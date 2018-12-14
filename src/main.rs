@@ -85,7 +85,7 @@ fn main() {
 
     let mut scheduler = Scheduler::new();
     scheduler.every(5.minutes()).run(update.clone());
-    scheduler.watch_thread(std::time::Duration::from_millis(500));
+    let _handle = scheduler.watch_thread(std::time::Duration::from_millis(500));
     thread::spawn(update);
 
     rocket::ignite()
