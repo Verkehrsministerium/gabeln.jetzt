@@ -3,6 +3,7 @@ use reqwest::Client;
 use std::env;
 use error::GabelnError;
 
+#[derive(Clone)]
 pub struct Giphy {
     client: Client,
     api_key: String,

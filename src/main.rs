@@ -1,5 +1,5 @@
 #![feature(proc_macro_hygiene, decl_macro)]
-#![feature(vec_remove_item)]
+#![feature(impl_trait_in_bindings)]
 
 extern crate regex;
 extern crate reqwest;
@@ -46,7 +46,6 @@ fn main() {
         .info(Color::Green)
         .debug(Color::Cyan)
         .trace(Color::Magenta);
-
     fern::Dispatch::new()
         .format(move |out, message, record| {
             out.finish(format_args!(
@@ -61,7 +60,7 @@ fn main() {
             ))
         })
         .level(log::LevelFilter::Info)
-        .level_for("gabeln", log::LevelFilter::Trace)
+        .level_for("gabeln_jetzt", log::LevelFilter::Trace)
         .chain(std::io::stdout())
         .apply()
         .unwrap();

@@ -1,6 +1,6 @@
 use std::error::Error;
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub enum GabelnError {
     FailedToFetchUserEvents(String),
     FailedToParseUserEvents,
@@ -14,6 +14,7 @@ pub enum GabelnError {
     NoGiphyApiKey,
     FailedToFetchGif,
     FailedToParseGiphyResponse,
+    FailedToStartBot,
 }
 
 impl Error for GabelnError {
@@ -31,6 +32,7 @@ impl Error for GabelnError {
             GabelnError::NoGiphyApiKey => "Please provide a giphy API key via environment variable!",
             GabelnError::FailedToFetchGif => "Failed to fetch gif from giphy API!",
             GabelnError::FailedToParseGiphyResponse => "Failed to parse response from giphy API!",
+            GabelnError::FailedToStartBot => "Failed to start bot!",
         }
     }
 }
