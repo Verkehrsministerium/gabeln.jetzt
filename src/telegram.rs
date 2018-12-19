@@ -104,7 +104,7 @@ impl TelegramBot {
             },
             BotUpdate::Event(event) => {
                 self.send_text(format!(
-                    "**{}** forked __{}__ at [{}]({})!",
+                    "*{}* forked _{}_ at [{}]({})!",
                     event.actor.display_login,
                     event.repo.name,
                     event.payload.forkee.clone().unwrap().full_name,
@@ -188,6 +188,9 @@ impl TelegramBot {
                         },
                         Some("stop") => {
                             self.cmd_stop(message)
+                        },
+                        Some("help") => {
+                            self.cmd_help(message)
                         },
                         Some(command) => {
                             self.cmd_unknown(message, command.to_owned())
@@ -273,6 +276,29 @@ impl TelegramBot {
                     inner.api.spawn(message.text_reply("Bot is not running in this chat!"));
                 }
             }
+
+            Ok(())
+        }))
+    }
+
+    fn cmd_help<'a>(&self, message: Message) -> BotFuture<'a> {
+        let inner_arc = self.inner.clone();
+
+        Box::new(lazy(move || {
+            let inner = inner_arc.lock().unwrap();
+
+            inner.api.spawn(
+                message.text_reply(format!(
+                    "*gabeln.jetzt Telegram Bot*
+
+This telegram bot will send messages when a configured github user forks a repository on [github.com](https://github.com). To configure your user for this bot please ask your server administrator.
+
+This bot also sends fork gifs when any message in this chat contains the keyword `gabeln.jetzt`.
+
+Happy forking!
+"
+                )).parse_mode(ParseMode::Markdown)
+            );
 
             Ok(())
         }))
