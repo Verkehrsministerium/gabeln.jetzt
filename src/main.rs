@@ -1,5 +1,6 @@
 #![feature(proc_macro_hygiene, decl_macro)]
 #![feature(impl_trait_in_bindings)]
+#![feature(vec_remove_item)]
 
 extern crate regex;
 extern crate reqwest;
@@ -79,7 +80,13 @@ fn main() {
     };
 
     thread::spawn(move || {
-        TelegramBot::new().unwrap().run(recv).unwrap();
+        match TelegramBot::new().unwrap().run(recv) {
+            Ok(_) => {
+            },
+            Err(e) => {
+                error!("{:?}", e);
+            },
+        }
     });
 
     let mut scheduler = Scheduler::new();
