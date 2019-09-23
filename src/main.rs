@@ -5,6 +5,7 @@
 extern crate regex;
 extern crate reqwest;
 extern crate chrono;
+
 extern crate chrono_humanize;
 extern crate rayon;
 extern crate atom_syndication;
