@@ -4,23 +4,23 @@ version = "0.1.1"
 authors = ["Fin Christensen <christensen.fin@gmail.com>"]
 
 [dependencies]
-serde = "^1.0"
-serde_json = "^1.0"
-serde_derive = "^1.0"
-regex = "^1.0"
-reqwest = "^0.9.4"
-rayon = "^1.0"
-chrono = { version = "^0.4", features = ["serde"] }
-atom_syndication = "^0.6.0"
-rocket = "^0.4.0"
-rocket_contrib = "^0.4.0"
-maud = "*"
-chrono-humanize = "^0.0.11"
-clokwerk = "^0.1.0"
+serde = "1.0.101"
+serde_json = "1.0.40"
+serde_derive = "1.0.101"
+regex = "1.3.1"
+reqwest = "0.9.20"
+rayon = "1.2.0"
+chrono = { version = "0.4.9", features = ["serde"] }
+atom_syndication = "0.6.0"
+rocket = "0.4.2"
+rocket_contrib = "0.4.2"
+maud = "0.21.0"
+chrono-humanize = "0.0.11"
+clokwerk = "0.2.2"
 #telegram-bot-fork = "^0.7.6"
 telegram-bot-fork = { git = "https://github.com/fin-ger/telegram-bot" }
-tokio = "^0.1"
-futures = "^0.1"
-log = "^0.4.0"
-fern = { version = "^0.5.7", features = ["colored"] }
-rand = "^0.6.1"
+tokio = "0.1.22"
+futures = "0.1.29"
+log = "0.4.8"
+fern = { version = "0.5.8", features = ["colored"] }
+rand = "0.7.2"
