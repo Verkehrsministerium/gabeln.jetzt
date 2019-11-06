@@ -5,6 +5,7 @@
 [![](https://img.shields.io/docker/build/fin1ger/gabeln.jetzt.svg)](https://cloud.docker.com/repository/docker/fin1ger/gabeln.jetzt/tags)
 ![](https://img.shields.io/microbadger/image-size/fin1ger%2Fgabeln.jetzt.svg)
 [![](https://img.shields.io/github/tag/verkehrsministerium/gabeln.jetzt.svg)](https://github.com/verkehrsministerium/gabeln.jetzt/releases)
+[![Built with Spacemacs](https://cdn.rawgit.com/syl20bnr/spacemacs/442d025779da2f62fc86c2082703697714db6514/assets/spacemacs-badge.svg)](http://spacemacs.org)
 
 ---
 
